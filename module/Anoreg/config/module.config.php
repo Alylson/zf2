@@ -2,29 +2,61 @@
 /**
  * Created by PhpStorm.
  * User: alylson
- * Date: 24/07/18
- * Time: 08:52
+ * Date: 30/07/18
+ * Time: 21:17
  */
+
 namespace Anoreg;
 
 use Zend\Router\Http\Segment;
 use Zend\ServiceManager\Factory\InvokableFactory;
-use Anoreg\Controller\AnoregController;
+use Anoreg\Controller\IndexController;
 
 return array(
+    'controllers' => array(
+      'invokables' => array(
+          'Anoreg\Controller\Index' => Controller\IndexController::class
+      )
+    ),
     'router' => array(
         'routes' => array(
-            'anoreg' => array(
-                'type'    => 'segment',
+            'home' => array(
+                'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => array(
-                    'route'    => '/anoreg[/][:action][/:id]',
-                    'constraints' => array(
-                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                        'id'     => '[0-9]+',
-                    ),
+                    'route'    => '/',
                     'defaults' => array(
-                        'controller' => 'Controller\AnoregController::class',
+                        'controller' => 'Anoreg\Controller\Index',
                         'action'     => 'index',
+                    ),
+                ),
+            ),
+            // The following is a route to simplify getting started creating
+            // new controllers and actions without needing to create a new
+            // module. Simply drop new controllers in, and you can access them
+            // using the path /application/:controller/:action
+            'index' => array(
+                'type'    => 'Literal',
+                'options' => array(
+                    'route'    => '/index',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'Anoreg\Controller',
+                        'controller'    => 'Index',
+                        'action'        => 'index',
+                    ),
+                ),
+                'may_terminate' => true,
+                'child_routes' => array(
+                    'default' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/[:controller[/:action]]',
+                            'constraints' => array(
+                                'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
+                            ),
+                            'defaults' => array(
+                            ),
+                        ),
                     ),
                 ),
             ),
@@ -32,7 +64,7 @@ return array(
     ),
     'view_manager' => array(
         'template_path_stack' => array(
-            'anoreg' => __DIR__ . '/../view',
+            'index' => __DIR__ . '/../view',
         ),
     ),
 );
